@@ -42,6 +42,12 @@ double winmain::UpdateToFrameRatio;
 winmain::DurationMs winmain::TargetFrameTime;
 optionsStruct& winmain::Options = options::Options;
 
+bool is_pressed;
+int back_jsdevice;
+int start_jsdevice;
+bool back_pressed = false;
+bool start_pressed = false;
+
 int winmain::WinMain(LPCSTR lpCmdLine)
 {
 	restart = false;
@@ -753,19 +759,36 @@ int winmain::event_handler(const SDL_Event* event)
 			}
 		}
 		break;
-	case SDL_CONTROLLERBUTTONDOWN:
-		pb::InputDown({InputTypes::GameController, event->cbutton.button});
+ 
+  	case SDL_CONTROLLERBUTTONDOWN:
+      is_pressed = true;		        
+      pb::InputDown({InputTypes::GameController, event->cbutton.button});
 		switch (event->cbutton.button)
 		{
 		case SDL_CONTROLLER_BUTTON_START:
 			pause();
+            start_pressed = is_pressed;
 			break;
-		default: ;
-		}
+          case SDL_CONTROLLER_BUTTON_LEFTSTICK: // Chi button 1
+          case SDL_CONTROLLER_BUTTON_BACK: // aka select
+            back_pressed = is_pressed;
+			break;
+	default: ;
+	}
+    if (start_pressed && back_pressed) {
+    	SDL_Event event{SDL_QUIT};
+	    SDL_PushEvent(&event);
+        }
 		break;
 	case SDL_CONTROLLERBUTTONUP:
-		pb::InputUp({InputTypes::GameController, event->cbutton.button});
-		break;
+      is_pressed = false;			
+      pb::InputUp({InputTypes::GameController, event->cbutton.button});
+		case SDL_CONTROLLER_BUTTON_START:
+            back_pressed = is_pressed;
+			break;
+        case SDL_CONTROLLER_BUTTON_BACK: // aka select
+            back_pressed = is_pressed;		
+            break;
 	default: ;
 	}
 
