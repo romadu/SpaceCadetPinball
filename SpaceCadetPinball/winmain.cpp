@@ -761,37 +761,50 @@ int winmain::event_handler(const SDL_Event* event)
 		break;
  
   	case SDL_CONTROLLERBUTTONDOWN:
-      is_pressed = true;		        
-      pb::InputDown({InputTypes::GameController, event->cbutton.button});
+        pb::InputDown({InputTypes::GameController, event->cbutton.button});
+        is_pressed = event->type == SDL_CONTROLLERBUTTONDOWN;;		        
 		switch (event->cbutton.button)
 		{
 		case SDL_CONTROLLER_BUTTON_START:
-			pause();
+			new_game();
+			start_jsdevice = event->cdevice.which;
             start_pressed = is_pressed;
 			break;
-          case SDL_CONTROLLER_BUTTON_LEFTSTICK: // Chi button 1
-          case SDL_CONTROLLER_BUTTON_BACK: // aka select
+        case SDL_CONTROLLER_BUTTON_BACK: // aka select
+			pause();
+        case SDL_CONTROLLER_BUTTON_LEFTSTICK: // Chi button 1
+			back_jsdevice = event->cdevice.which;
             back_pressed = is_pressed;
 			break;
-	default: ;
-	}
-    if (start_pressed && back_pressed) {
-    	SDL_Event event{SDL_QUIT};
-	    SDL_PushEvent(&event);
+	    default: ;
+	    }
+        if (start_pressed && back_pressed) {
+            if (start_jsdevice == back_jsdevice) {
+    	        SDL_Event event{SDL_QUIT};
+	            SDL_PushEvent(&event);
+	        }
         }
 		break;
+
 	case SDL_CONTROLLERBUTTONUP:
-      is_pressed = false;			
-      pb::InputUp({InputTypes::GameController, event->cbutton.button});
+        pb::InputUp({InputTypes::GameController, event->cbutton.button});
+        is_pressed = event->type == SDL_CONTROLLERBUTTONDOWN;;		        
+		switch (event->cbutton.button)
+		{
 		case SDL_CONTROLLER_BUTTON_START:
-            back_pressed = is_pressed;
+			start_jsdevice = event->cdevice.which;
+			start_pressed = is_pressed;
 			break;
         case SDL_CONTROLLER_BUTTON_BACK: // aka select
+			back_jsdevice = event->cdevice.which;
             back_pressed = is_pressed;		
             break;
+	    default: ;
+	    }
+	    break;
 	default: ;
-	}
-
+    }
+    
 	return 1;
 }
 
