@@ -125,7 +125,7 @@ void high_score::show_high_score_dialog(high_score_struct* table)
 	dlg_enter_name = 0;
 	dlg_score = 0;
 	dlg_hst = table;
-	ShowDialog = true;
+//	ShowDialog = true;
 }
 
 void high_score::show_and_set_high_score_dialog(high_score_struct* table, int score, int pos, LPCSTR defaultName)
@@ -135,7 +135,7 @@ void high_score::show_and_set_high_score_dialog(high_score_struct* table, int sc
 	dlg_hst = table;
 	dlg_enter_name = 1;
 	strncpy(default_name, defaultName, sizeof default_name - 1);
-	ShowDialog = true;
+//	ShowDialog = true;
 }
 
 void high_score::RenderHighScoreDialog()
